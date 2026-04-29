@@ -39,13 +39,13 @@ class BaseTest:
             print("Executing the script on local system")
             if browser=="chromium":
                 print("open the chromium browser")
-                self.browser=self.playwright.chromium.launch(headless=True)
+                self.browser=self.playwright.chromium.launch(headless=False)
             elif browser=="firefox":
                 print("open the firefox browser")
-                self.browser=self.playwright.firefox.launch(headless=True)
+                self.browser=self.playwright.firefox.launch(headless=False)
             else:
                 print("open the webkit(safari) browser")
-                self.browser = self.playwright.webkit.launch(headless=True)
+                self.browser = self.playwright.webkit.launch(headless=False)
 
         else:
             print("Executing the script on remote system")
@@ -81,14 +81,16 @@ class BaseTest:
 
 
     @pytest.fixture(autouse=True)
-    def post_condition(self):
+    def post_condition(self,request):
         yield
         print("\npost condition")
 
-        print("Test Failed Taking screenshot")
-        allure.attach(self.page.screenshot(),name=self.test_name,
-                          attachment_type=allure.attachment_type.PNG)
-
+        if request.node.call.failed:
+            print("Test is Failed and Taking screenshot")
+            allure.attach(self.page.screenshot(),name=self.test_name,
+                              attachment_type=allure.attachment_type.PNG)
+        else:
+            print("Test is Passed and NOT Taking screenshot")
 
         print("close the page")
         self.page.close()
