@@ -5,4 +5,4 @@ pyjavaproperties
 openpyxl
 playwright
 allure-pytest
-pandas
+
